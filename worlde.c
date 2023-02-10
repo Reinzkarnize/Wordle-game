@@ -28,6 +28,8 @@ int main(int argc, string argv[])
 {
     // ensure proper usage
     // TODO #1
+
+    // Check if CL Argument if just one as required
     if (argc != 2)
     {
         printf("Usage: ./wordle wordsize\n");
@@ -38,8 +40,11 @@ int main(int argc, string argv[])
 
     // ensure argv[1] is either 5, 6, 7, or 8 and store that value in wordsize instead
     // TODO #2
+
+    // Check if array of argv[1] is one character
     if (strlen(argv[1]) == 1)
     {
+        // Check if argv[i] is betwen char '5' to '8' in ASCII
         if (argv[1][0] < 53 || argv[1][0] > 56)
         {
             printf("Error: wordsize must be either 5, 6, 7, or 8\n");
@@ -52,6 +57,7 @@ int main(int argc, string argv[])
         return 1;
     }
 
+    // Turn agrv[1] char into integer
     wordsize = atol(argv[1]);
 
     // open correct file, each file has exactly LISTSIZE words
@@ -121,7 +127,7 @@ int main(int argc, string argv[])
     // TODO #7
     if (won == true)
     {
-        printf("You won!");
+        printf("You won!\n");
     }
     else
     {
@@ -139,17 +145,26 @@ string get_guess(int wordsize)
 
     // ensure users actually provide a guess that is the correct length
     // TODO #3
-    do
+
+    // loop until marker is equal to wordsize, mean all is lowercase
+    int marker = 0;
+    while (marker != wordsize)
     {
         guess = get_string("Input a 5-letter word: ");
-    }
-    while (strlen(guess) != wordsize);
+        marker = 0;
 
-    for (int i = 0; i < wordsize; i++)
-    {
-        if (islower(guess[i]) == 0)
+        // check if array of char in "guess" is equal to wordsize
+        if (strlen(guess) == wordsize)
         {
-            guess = get_string("Input a 5-letter word: ");
+            // check each char in "guess"
+            for (int i = 0; i < wordsize; i++)
+            {
+                // if lowercase, add marker to 1 mean correct input
+                if (islower(guess[i]))
+                {
+                    marker += 1;
+                }
+            }
         }
     }
 
@@ -162,15 +177,19 @@ int check_word(string guess, int wordsize, int status[], string choice)
 
     // compare guess to choice and score points as appropriate, storing points in status
     // TODO #5
+
+    // loop for each char in "guess" and "choice" a.k.a answer
     for (int i = 0; i < wordsize; i++)
     {
         for (int j = 0; j < wordsize; j++)
         {
+            // if char in "guess" in correct spot, add "status[i]" (a.k.a score) to 2
             if (guess[i] == choice[i])
             {
                 status[i] = EXACT;
             }
 
+            // if char in "guess" in "status" but wrong spot, add "status[i]" (a.k.a score) to 1
             else if (guess[i] == choice[j])
             {
                 status[i] = CLOSE;
@@ -178,6 +197,7 @@ int check_word(string guess, int wordsize, int status[], string choice)
         }
     }
 
+    // sum each array of status[] to score
     for (int j = 0; j < wordsize; j++)
     {
         score += status[j];
